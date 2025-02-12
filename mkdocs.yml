@@ -1,0 +1,68 @@
+site_name: My Docs
+site_url: https://lferragi.web.cern.ch/documentation/site/
+
+theme:
+  name: 'material'
+  font: 
+    text: Consolas
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: 'deep purple'
+      accent: 'purple'
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: 'light blue'
+      accent: 'teal'
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  logo: ../../.static/uni_logo.png
+  favicon: ../../.static/hunter_logo.png
+  
+  icon:
+    repo: fontawesome/solid/house
+  features:
+    - navigation.top
+    - navigation.path
+    - navigation.tabs
+    - content.code.copy
+
+
+extra_css: 
+  - 'extra.css'
+
+extra_javascript:
+  - 'extra.js'
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+extra:
+  homepage: https://lferragi.web.cern.ch/
+
+
+plugins:
+  - search
+  - git-revision-date-localized
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+
+# Page tree
+nav:
+  - Home: 
+    - Home: index.md
+    - Welcome to MkDocs: mkdocs.md
