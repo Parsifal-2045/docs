@@ -66,3 +66,4 @@ nav:
   - Home: 
     - Home: index.md
     - Welcome to MkDocs: mkdocs.md
+  - Glossary: glossary.md
