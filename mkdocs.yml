@@ -66,4 +66,6 @@ nav:
   - Home: 
     - Home: index.md
     - Welcome to MkDocs: mkdocs.md
+  - CMSSW:
+    - Utils and setup: cmssw/utils.md
   - Glossary: glossary.md
