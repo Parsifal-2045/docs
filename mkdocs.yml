@@ -47,9 +47,12 @@ extra:
 plugins:
   - search
   - git-revision-date-localized
+  - glightbox
 
 markdown_extensions:
   - admonition
+  - md_in_html
+  - pymdownx.blocks.caption
   - pymdownx.details
   - pymdownx.superfences:
       custom_fences:
@@ -68,4 +71,6 @@ nav:
     - Welcome to MkDocs: mkdocs.md
   - CMSSW:
     - Utils and setup: cmssw/utils.md
+  - Phase 2 HLT Muon reconstruction:
+    - Introduction: phase2_muons/introduction.md
   - Glossary: glossary.md
