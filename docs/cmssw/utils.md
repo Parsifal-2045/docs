@@ -47,9 +47,9 @@ Finally, set the Remote-ssh vscode extension to use the correct configuration fi
 <p style='margin-left:1em;'>
 When using the integrated terminal in vscode it might sometimes happen that the kerberos ticket is not refreshed correctly. 
 <br>
-This results in getting a permission denied error when trying to access the .bashrc
+This results in getting a permission denied error when trying to access your <code>.bashrc</code> and generic environment issues.
 <br>
-To solve this issue one can simply execute the kinit and aklog commands to manually refresh the kerberos ticket. Having done so, simply start a new bash session and everything should be back to normal.
+To solve this issue one can simply execute the <code>kinit</code> and <code>aklog</code> commands to manually refresh the kerberos ticket. Having done so, simply start a new bash session and everything should be back to normal.
 </span>
 </div>
 
