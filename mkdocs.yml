@@ -71,6 +71,7 @@ nav:
     - Welcome to MkDocs: mkdocs.md
   - CMSSW:
     - Utils and setup: cmssw/utils.md
+    - cmsDriver and workflows: cmssw/driver_and_workflows.md
   - Phase 2 HLT Muon reconstruction:
     - Introduction: phase2_muons/introduction.md
     - New Standalone seeder: phase2_muons/new_seeder.md
