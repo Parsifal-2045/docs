@@ -76,4 +76,9 @@ nav:
   - Phase 2 HLT Muon reconstruction:
     - Introduction: phase2_muons/introduction.md
     - New Standalone seeder: phase2_muons/new_seeder.md
+    - Tracker Muon selector: phase2_muons/L3_selector.md
+    - HLT Muon ntuples: phase2_muons/hlt_muon_ntuples.md
+    - Validation: phase2_muons/validation.md
+  - Phase 2 Tracking optimization:
+    - Studies on TTbar: phase2_tracking/studies_on_TTbar.md
   - Glossary: glossary.md
