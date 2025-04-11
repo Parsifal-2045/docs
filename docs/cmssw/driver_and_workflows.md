@@ -1,4 +1,7 @@
-## RunTheMatrix, cmsDriver, and cmsRun
+# RunTheMatrix, cmsDriver, and cmsRun
+This section introduces the runTheMatrix, cmsDriver and cmsRun commands/utilities for CMSSW, with some useful recipies and commands.
+
+## Intro to runTheMatrix
 runTheMatrix allows to pick and choose a workflow using its designated number. The workflow includes a series of conditions (e.g. Phase-2, geometry, era, PU, ecc.). For workflows whose number does not end with .0, process modifiers are also included. For example, the Phase-2 changes to HLT muon reconstruction are found in all workflows ending with .777 (Inside-Out reconstruction first) and .778 (Outside-In reconstruction first) (SingleMuon, TTbar, and ZMM).
 The basic approach to runTheMatrix is listing all available workflows
 ```bash
@@ -84,3 +87,20 @@ ZMM_14TeV_TuneCP5_cfi
 ```
 
 </details>
+
+
+## Process all relVals in a folder
+When processing multiple files from the same directory there is a simple way to list them all using python (on a machine which has `/eos` mounted):
+
+```python
+import os
+# ZMM PU
+source_path = '/eos/cms/store/relval/CMSSW_15_0_0_pre2/RelValZMM_14/GEN-SIM-DIGI-RAW/PU_141X_mcRun4_realistic_v3_STD_Run4D110_PU-v1/2590000/'
+
+files = []
+for path in os.listdir(source_path):
+    if os.path.isfile(os.path.join(source_path, path)):
+        files.append('file:' + os.path.join(source_path, path))
+```
+
+In this way, passing `files` as the input in the source module of CMSSW will make the entire list of files available to the process (setting the number of events to process to -1 might result in long execution times 🙂)
