@@ -129,8 +129,82 @@ In this case, I have produced three HLT configuration files:
 
 The script benchmarks each of these configuration running it three times (after warming up and measuring I/O only). Timing logs from the CMSSW Timing service are also produced (one folder per configuration). These can be visualized as usual with the circles utility running on a web server.
 
-## Producing input skims
-// re-run L1 on top of Spring24 samples //
+One more step, that is not necessary for every timing measurement, is to check the effect of different configurations on the throughput and timing of the HLT. In this case, we want the configuration file to remain exactly the same, while varying the number of jobs, threads and streams used to process it. A possible script to do this is reported here
+
+<details>
+<summary> Configuration measurement script </summary>
+
+```bash
+#! /bin/bash
+
+hlt_config_names=("baseline" "IO_first" "OI_first")
+
+jobs_threads_streams_presets=(
+  # Add presets here as needed following the "jobs,threads,streams" format
+  "64,8,8"
+  "32,16,16"
+  "16,32,32"
+  "16,32,24"
+  "8,64,64"
+)
+
+echo "Starting HLT benchmark for configurations ${hlt_config_names[@]}"
+echo "With jobs,threads,streams: ${jobs_threads_streams_presets[@]}"
+
+for config_name in "${hlt_config_names[@]}"; do
+  echo "Configuration: $config_name"
+
+  cfg="${config_name}_config.py"
+
+  for preset in "${jobs_threads_streams_presets[@]}"; do
+          # Use IFS and read to parse the preset string
+          # IFS=',' temporarily sets the Internal Field Separator to a comma
+          # read -r jobs threads streams reads the comma-separated values into the variables
+          # <<< "$preset" feeds the preset string into the read command
+          IFS=',' read -r jobs threads streams <<< "$preset"
+
+          echo "  Running with Preset: jobs=$jobs, threads=$threads, streams=$streams"
+          events=1000
+          logdir="logs.$config_name.${jobs}j.${threads}t.${streams}s"
+          output_filename="${config_name}_${jobs}j_${threads}t_${streams}s.json"
+
+          # Download patatrack-scripts, if they are not there already.
+          if [ ! -d 'patatrack-scripts' ]; then
+            echo "Cloning patatrack-scripts repository"
+            git clone https://github.com/cms-patatrack/patatrack-scripts --depth 1
+          fi
+
+          if [ ! -d "${logdir}" ]; then
+            echo "Creating directory for the logs at ${logdir}"
+            mkdir -p ${logdir}
+          fi
+
+          patatrack-scripts/benchmark -j ${jobs} -t ${threads} -s ${streams} -e ${events} --run-io-benchmark \
+          -k Phase2Timing_resources.json --event-skip 100 --event-resolution 25 --wait 30 \
+          --logdir ${logdir} -- ${cfg} | tee ${logdir}/output.log
+          mergeResourcesJson.py ${logdir}/step*/pid*/Phase2Timing_resources.json > ${output_filename}
+
+          script_dir=$(dirname -- "$0")
+          if [ -f "$script_dir/augmentResources.py" ]; then
+            echo "Running augmentResources.py"
+            python3 $script_dir/augmentResources.py
+          fi
+
+          cp -p ${output_filename} ${logdir}
+          cp -p ${cfg} ${logdir}
+
+  done # End of inner loop (presets)
+
+done # End of outer loop (configurations)
+
+echo "All HLT configurations have been processed successfully."
+```
+
+</details>
+
+# Producing input skims
+When timing on large samples or for Phase 2 studies, the input files can become quite large. That's why timing is generally run on input skims, which remove everything that is not needed to run the L1 Global Trigger and HLT (i.e. timing). 
+The starting point is a configuration file that runs only the `L1` and `L1TrackTrigger` steps as the following:
 ```bash
 cmsDriver.py Phase2 -s L1,L1TrackTrigger \
 --processName=SKIM \
@@ -149,3 +223,30 @@ cmsDriver.py Phase2 -s L1,L1TrackTrigger \
 -n -1 \
 --no_exec
 ```
+This will produce, without running, the python configuration file to rerun the L1 and L1 TrackTrigger. The only other step is to add the following output commands to skim the data:
+```bash
+# Output definition
+
+myOutputCommands = cms.untracked.vstring(
+        'drop *_*_*_HLT',
+        'drop *_*_*_RECO',
+        'drop *_*_*_SIM',
+        'drop triggerTriggerFilterObjectWithRefs_l1t*_*_HLT',
+        'keep FEDRawDataCollection_rawDataCollector_*_HLT',
+        'keep *_simSiPixelDigis_*_*',
+        'keep Phase2TrackerDigiedmDetSetVector_*_*_HLT',
+        'keep *_simMuonRPCDigis_*_HLT',
+        'keep *_*_bunchSpacing_HLT',
+        'keep *_mix_FTL*_HLT',
+        'keep *_mix_EBTimeDigi_HLT',
+        'keep *_simHGCalUnsuppressedDigis_*_HLT',
+        'keep *_simMuonCSCDigis_*_HLT',
+        'keep *_simMuonDTDigis_*_HLT',
+        'keep *_simMuonGEMDigis_*_HLT',
+        'keep *_*_*_SKIM'
+        )
+
+process.FEVTDEBUGHLToutput.outputCommands = myOutputCommands
+```
+
+Running this configuration will produce an output file containing the skims of the input, with the output from L1 (but no L1P2GT), which can be used for timing measurements as discussed in the previous section.
