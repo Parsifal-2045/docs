@@ -1,12 +1,12 @@
 # General configuration tips
 This section includes a collection of configuration tips and tricks to set up the coding environment and the access to CERN resources 
 
-## Visual Studio Code and Kerberos
+## Visual Studio Code and Kerberos [**WINDOWS**]
 This is how I configured Visual Studio code to connect to CERN machines using a kerberos ticket from Windows.
 
 **One-time configuration**
 
-- Install openSSH (available from additiona features in settings)
+- Install openSSH (available from additional features in settings)
 
 - Setup the windows ticket manager:
 
@@ -40,16 +40,56 @@ Host CERN_MACHINE
 
 Finally, set the Remote-ssh vscode extension to use the correct configuration file (`C:\Users\user\.ssh\config`) and follow the [guide on Service-Now](https://cern.service-now.com/service-portal?id=kb_article&n=KB0008901). Now all vscode connections through lxplus should work without requiring a password.
 
+## Visual Studio Code and Kerberos [**Linux**]
+Only a couple of packages are required to setup ssh access and kerberos authentication, you should be able to install them using `apt`, `dnf` or any distro's equivalent package manager by running something like 
+```bash
+sudo dnf install ssh kinit
+```
+Once you have both packages installed (they might also come bundled with your linux distro), you can simply run
+```bash
+kinit <CERN username>@CERN.ch
+```
+type your password and you will have a kerberos ticket to access the machines on the CERN network without typing your password. The ticket can be extended or renewed, to check its status you can run 
+```
+klist -f
+```
+In order to manage multiple vscode connections to lxplus, I found best to setup a control master so that a single ssh connection can be shared among multiple terminal instances (including the two connections required by lxplus to work). Therefore, your ssh config file should have entries that look like this:
+```bash
+Host lxplus  
+  Hostname lxplus.cern.ch
+  User <CERN username> 
+  GSSAPIAuthentication yes
+  GSSAPIDelegateCredentials yes
+  ForwardAgent yes
+  ForwardX11 yes
+  ForwardX11Trusted no
+  CheckHostIP no
+  ProxyJump none
+  ControlPath /run/user/%i/%r@%h:%p
+  ControlMaster auto
+  ServerAliveInterval 100
+  ControlPersist 1m
+
+Host some-cern-machine
+  Hostname some-cern-machine.cern.ch
+  User <CERN username> 
+  GSSAPIAuthentication yes
+  GSSAPIDelegateCredentials yes
+  ProxyJump lxplus
+```
+
+Also in this case, you should make sure that your vscode server is not installed on `afs` (prefer `/tmp` so that the server is local to a single lxplus node). For a more detailed guide on configuring vscode checkout [Service-Now](https://cern.service-now.com/service-portal?id=kb_article&n=KB0008901).
+
 <div class="warning" style='background-color:#E9D8FD; color: #69337A; border-left: solid #805AD5 4px; border-radius: 4px; padding:0.7em;'>
 <span>
 <p style='margin-top:1em; text-align:center'>
 <b>NOTE</b></p>
 <p style='margin-left:1em;'>
-When using the integrated terminal in vscode it might sometimes happen that the kerberos ticket is not refreshed correctly. 
+When using the integrated terminal in vscode or if you are connecting to a long-standing tmux session, it might sometimes happen that the kerberos ticket is not refreshed correctly. 
 <br>
 This results in getting a permission denied error when trying to access your <code>.bashrc</code> and generic environment issues.
 <br>
-To solve this issue one can simply execute the <code>kinit</code> and <code>aklog</code> commands to manually refresh the kerberos ticket. Having done so, simply start a new bash session and everything should be back to normal.
+To solve this issue one can simply execute the <code>kinit && aklog</code> commands to manually refresh the kerberos ticket. Having done so, simply start a new bash session and everything should be back to normal.
 </span>
 </div>
 
@@ -124,6 +164,12 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = "DEBUG"
 process.MessageLogger.debugModules = ["myModule"]  # or ["*"] for all modules (VERBOSE)
 ```
+I've found more success getting the debug messages to show when including both parent and cloned modules in the list, for example: 
+```bash
+process.MessageLogger.debugModules = ['L3MuonTracksSelectionFromL1TkMu', 'hltL3MuonTracksSelectionFromL1TkMu']
+```
+where the `hlt` module is a clone of the other one with a couple of modified parameters.
+
 Scram uses gcc as the default compiler, but clang is also available using the command 
 ```bash
 scram b COMPILER=llvm
