@@ -81,4 +81,7 @@ nav:
     - Validation: phase2_muons/validation.md
   - Phase 2 Tracking optimization:
     - Studies on TTbar: phase2_tracking/studies_on_TTbar.md
+  - HLT Operation Manager: 
+    - Introduction: hom/intro.md
+    - confDB: hom/confdb.md
   - Glossary: glossary.md

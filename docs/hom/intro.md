@@ -1,0 +1,2 @@
+# How to survive as an HLT Operation Manager (HOM)
+In this section I'll try to detail my setup for the first few weeks as HOM. For updated documentation always check out the official [FOG](https://cms-hlt-operations.docs.cern.ch/) page where everything is detailed and kept updated. Also, checkout the 2025 HOM tutorial on [indico](https://indico.cern.ch/event/1504735/)
