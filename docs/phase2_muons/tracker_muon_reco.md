@@ -58,10 +58,10 @@ Changes to [`SeedGeneratorFromProtoTracksEDProducer`](https://github.com/cms-sw/
 
 |        Parameter        |                   Baseline                  |           Proposed change          |
 |:-----------------------:|:-------------------------------------------:|:----------------------------------:|
-|     `InputCollection`     |      hltPhase2L3FromL1TkMuonPixelTracks     | hltL3MuonTracksSelectionFromL1TkMu |
-|  `InputVertexCollection`  | hltPhase2L3FromL1TkMuonTrimmedPixelVertices |                 ""                 |
-|     `SeedCreatorPset`     |         hltPhase2SeedFromProtoTracks        |               Removed              |
-| `useProtoTrackKinematics` |                    False                    |                True                |
+|     InputCollection     |      hltPhase2L3FromL1TkMuonPixelTracks     | hltL3MuonTracksSelectionFromL1TkMu |
+|  InputVertexCollection  | hltPhase2L3FromL1TkMuonTrimmedPixelVertices |                 ""                 |
+|     SeedCreatorPset     |         hltPhase2SeedFromProtoTracks        |               Removed              |
+| useProtoTrackKinematics |                    False                    |                True                |
 
 Changing the parameters of the two modules that follow ([`ckfTrackCandidateMaker`](https://github.com/cms-sw/cmssw/blob/c83ecb127f70592a95b0544c2e7e2404c9d7e440/HLTrigger/Configuration/python/HLT_75e33/modules/hltIter0Phase2L3FromL1TkMuonCkfTrackCandidates_cfi.py#L3) and [`TrackProducer`](https://github.com/cms-sw/cmssw/blob/c83ecb127f70592a95b0544c2e7e2404c9d7e440/HLTrigger/Configuration/python/HLT_75e33/modules/hltIter0Phase2L3FromL1TkMuonCtfWithMaterialTracks_cfi.py#L4)) does not seem to produce vastly different results on the sample used for development (ZMM 200PU), some details on the tests run using parameters from Muon isolation are left as additional information.
 
@@ -71,15 +71,15 @@ Changing the parameters of the two modules that follow ([`ckfTrackCandidateMaker
 
 |          Parameter          |                             Iter0                             |                     Iso                     |
 |:---------------------------:|:-------------------------------------------------------------:|:-------------------------------------------:|
-|     `RedundantSeedCleaner`    |                              none                             |       CachingSeedCleanerBySharedInput       |
-|    `TrajectoryBuilderPset`    | HLTIter0Phase2L3FromL1TkMuonPSetGroupedCkfTrajectoryBuilderIT | hltPhase2L3MuonInitialStepTrajectoryBuilder |
-|      `TrajectoryCleaner`      |              hltESPTrajectoryCleanerBySharedHits              |        TrajectoryCleanerBySharedHits        |
-|     `propagatorAlongTISE`     |               PropagatorWithMaterialParabolicMf               |            PropagatorWithMaterial           |
-|    `propagatorOppositeTISE`   |           PropagatorWithMaterialParabolicMfOpposite           |        PropagatorWithMaterialOpposite       |
-|  `cleanTrajectoryAfterInOut`  |                             False                             |                     True                    |
-| `onlyPixelHitsForSeedCleaner` |                               NA                              |                     True                    |
-|     `reverseTrajectories`     |                               NA                              |                    False                    |
-|       `useHitsSplitting`      |                              True                             |                    False                    |
+|     RedundantSeedCleaner    |                              none                             |       CachingSeedCleanerBySharedInput       |
+|    TrajectoryBuilderPset    | HLTIter0Phase2L3FromL1TkMuonPSetGroupedCkfTrajectoryBuilderIT | hltPhase2L3MuonInitialStepTrajectoryBuilder |
+|      TrajectoryCleaner      |              hltESPTrajectoryCleanerBySharedHits              |        TrajectoryCleanerBySharedHits        |
+|     propagatorAlongTISE     |               PropagatorWithMaterialParabolicMf               |            PropagatorWithMaterial           |
+|    propagatorOppositeTISE   |           PropagatorWithMaterialParabolicMfOpposite           |        PropagatorWithMaterialOpposite       |
+|  cleanTrajectoryAfterInOut  |                             False                             |                     True                    |
+| onlyPixelHitsForSeedCleaner |                               NA                              |                     True                    |
+|     reverseTrajectories     |                               NA                              |                    False                    |
+|       useHitsSplitting      |                              True                             |                    False                    |
 
 No noticeable changes when moving from `iter0` to `iso` configuration.
 
@@ -87,9 +87,9 @@ No noticeable changes when moving from `iter0` to `iso` configuration.
 
 |      Parameter      |               Iter0               |             Iso             |
 |:-------------------:|:---------------------------------:|:---------------------------:|
-|    `AlgorithmName`    |              hltIter0             |         initialStep         |
-| `GeometricInnerState` |                True               |            False            |
-|   `NavigationSchool`  |                none               |    SimpleNavigationSchool   |
-|      `Propagator`     | hltESPRungeKuttaTrackerPropagator | RungeKuttaTrackerPropagator |
+|    AlgorithmName    |              hltIter0             |         initialStep         |
+| GeometricInnerState |                True               |            False            |
+|   NavigationSchool  |                none               |    SimpleNavigationSchool   |
+|      Propagator     | hltESPRungeKuttaTrackerPropagator | RungeKuttaTrackerPropagator |
 
 No noticeable changes when moving from `iter0` to `iso` configuration.
