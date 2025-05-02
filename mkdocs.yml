@@ -85,4 +85,5 @@ nav:
   - HLT Operation Manager: 
     - Introduction: hom/intro.md
     - confDB: hom/confdb.md
+    - Hilton: hom/hilton.md
   - Glossary: glossary.md
