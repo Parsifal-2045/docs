@@ -4,7 +4,7 @@ First things first, connect to one of the `hilton` nodes, login as `hltpro` and 
 ssh cmsusr
 ```
 ```bash
-ssh -Y $(logname)@hilton-c2b01-44-01ssh -Y $(logname)@hilton-c2b01-44-01
+ssh -Y $(logname)@hilton-c2b01-44-01
 ```
 ```bash
 sudo -u hltpro -i
@@ -12,9 +12,11 @@ cd ${HOSTNAME//-/_}/hilton
 sudo kdestroy
 kinit $(logname)@CERN.CH
 ```
-This is a great time to setup git and check if the [Hilton repository](https://gitlab.cern.ch/cms-tsg/fog/hilton/-/tree/master) was updated
+This is a great time to setup git and check if the [Hilton repository](https://gitlab.cern.ch/cms-tsg/fog/hilton/-/tree/master) was updated (you'll be prompted to enter your credentials both times)
 ```bash
 git fetch cms-tsg-fog
+```
+```bash
 git pull cms-tsg-fog master
 ```
 If the fetch fails the proxy through cmsusr went down, simply activate it via 
@@ -76,6 +78,7 @@ HLT menus will usually be under `/cdaq/test/username/...`. The run number will a
 ```bash
 ./cleanGenerateAndRun.sh --run <run number> (optional --maxEvents n)
 ```
+Optionally you can also force the configuration to re-run the L1 in cases where you want to test the compatibility with a new L1 key using the options `--l1 L1Menu_Collisions2025_v1_0_0_xml --l1-emulator uGT` (where the `xml` should in general be provided by the L1 DOC).
 
 - check the results
 ```bash
