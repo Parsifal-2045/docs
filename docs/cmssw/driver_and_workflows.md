@@ -88,7 +88,35 @@ ZMM_14TeV_TuneCP5_cfi
 
 </details>
 
-
+## cmsDriver recipes
+The `cmsDriver.py` command is used to generate the python configuration files for the CMSSW processes. The command can be used to generate configurations for different steps of the workflow, such as GEN, DIGI, RECO, etc.
+In general, I mostly use the command to run or re-run the HLT step on a given sample (possibly from RelVals), usually running validation at the same time. In this case, it is important to specify a few specific options to ensure that the pre-mixed PU is used correctly and that the HLT objects in the input file are not accessed by the new process. Therefore, this is the typical recipe:
+```bash
+cmsDriver.py step2 -s L1P2GT,HLT:75e33,VALIDATION:@hltValidation \
+--conditions auto:phase2_realistic_T33 \
+--datatier GEN-SIM-DIGI-RAW,DQMIO \
+-n 1000 \
+--eventcontent FEVTDEBUGHLT,DQMIO \
+--geometry ExtendedRun4D110 \
+--era Phase2C17I13M9 \
+--filein file:/eos/cms/store/relval/CMSSW_15_1_0_pre3/RelValTTbar_14TeV/GEN-SIM-DIGI-RAW/PU_150X_mcRun4_realistic_v1_STD_Run4D110_PU-v1/2590000/00c675dc-1517-4af7-8dd4-841e0668fefe.root \
+--fileout file:step2.root \
+--process HLTX \
+--inputCommands='keep *, drop *_hlt*_*_HLT, drop triggerTriggerFilterObjectWithRefs_l1t*_*_HLT'
+```
+Note that there is no DIGI step in this command, since the input file already contains the DIGI information with PU. Furthermore, the `--inputCommands` option is used to drop the HLT objects from the input file, so that they are not accessed by the new process. The `--process` option is used to specify a different process name (HLTX) to avoid conflicts with the original HLT process.
+Finally, to harvest the DQM plots, one can use the following command:
+```bash
+cmsDriver.py step5 -s HARVESTING:@hltValidation \
+--conditions auto:phase2_realistic_T33 \
+--mc \
+--geometry ExtendedRun4D110 \
+--scenario pp \
+--filetype DQM \
+--era Phase2C17I13M9 \
+-n -1  \
+--filein file:step2_inDQM.root
+```
 ## Process all relVals in a folder
 When processing multiple files from the same directory there is a simple way to list them all using python (on a machine which has `/eos` mounted):
 
